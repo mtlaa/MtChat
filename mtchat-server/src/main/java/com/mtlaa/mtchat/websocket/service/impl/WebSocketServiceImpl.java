@@ -7,6 +7,7 @@ import cn.hutool.json.JSONUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.mtlaa.mtchat.cache.user.UserCache;
+import com.mtlaa.mtchat.config.ThreadPoolConfig;
 import com.mtlaa.mtchat.domain.chat.vo.response.wsMsg.WSBaseResp;
 import com.mtlaa.mtchat.domain.user.entity.User;
 
@@ -29,6 +30,7 @@ import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +40,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * Create 2023/12/6 10:46
@@ -77,6 +81,9 @@ public class WebSocketServiceImpl implements WebSocketService {
     private ApplicationEventPublisher applicationEventPublisher;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    @Qualifier(ThreadPoolConfig.WEBSOCKET_PUSH_EXECUTOR)
+    private Executor executor;
 
     /**
      * 保存连接的ws channel
@@ -167,8 +174,8 @@ public class WebSocketServiceImpl implements WebSocketService {
     @Override
     public void sendMsgToAll(WSBaseResp<?> msg) {
         ONLINE_WS_MAP.forEach((channel, wci) -> {
-            // TODO 使用线程池异步推送所有人
-            sendMsg(channel, msg);
+            // 使用线程池异步推送所有人
+            executor.execute(() -> sendMsg(channel, msg));
         });
     }
 
@@ -180,11 +187,9 @@ public class WebSocketServiceImpl implements WebSocketService {
     @Override
     public void sendMsgToUid(WSBaseResp<?> webSocketResponse, Long uid) {
         CopyOnWriteArrayList<Channel> channels = ONLINE_UID_MAP.get(uid);  // 该用户可能多端在线
-        // TODO 提交到线程池异步推送
+        // 提交到线程池异步推送
         if (CollectionUtil.isNotEmpty(channels)){
-            channels.forEach(channel -> {
-                sendMsg(channel, webSocketResponse);
-            });
+            channels.forEach(channel -> executor.execute(() -> sendMsg(channel, webSocketResponse)));
         }else{
             log.error("该用户不在线，uid:{}", uid);
         }

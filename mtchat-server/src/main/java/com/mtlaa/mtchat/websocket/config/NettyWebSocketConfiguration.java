@@ -71,7 +71,7 @@ public class NettyWebSocketConfiguration {
                     protected void initChannel(SocketChannel socketChannel) throws Exception {
                         // 这整个pipeline里面加各种处理器，接收到一个请求是按顺序执行的
                         ChannelPipeline pipeline = socketChannel.pipeline();
-                        //30秒客户端没有向服务器发送心跳则关闭连接（30秒没有收到客户端的消息）  TODO
+                        //30秒客户端没有向服务器发送心跳则关闭连接（30秒没有收到客户端的消息）
                         // 注意：这只是一个检测器，只会检测并发出事件，我们需要自己捕获事件并且手动执行操作。 读空闲 写空闲 读写空闲
                         pipeline.addLast(new IdleStateHandler(3000, 0, 0));
                         // 因为使用http协议，所以需要使用http的编码器，解码器

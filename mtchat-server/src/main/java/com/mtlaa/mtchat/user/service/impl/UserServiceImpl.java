@@ -28,6 +28,7 @@ import com.mtlaa.mtchat.user.service.UserService;
 import com.mtlaa.mtchat.user.service.adapter.UserAdapter;
 
 import com.mtlaa.mtchat.cache.user.UserCache;
+import com.mtlaa.mtchat.utils.sensitive.SensitiveWordFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.BeanUtils;
@@ -66,9 +67,8 @@ public class UserServiceImpl implements UserService {
     private UserCache userCache;
     @Autowired
     private BlackDao blackDao;
-    // TODO 敏感词
-//    @Autowired
-//    private SensitiveWordBs sensitiveWordBs;
+    @Autowired
+    private SensitiveWordFilter sensitiveWordFilter;
 
 
     /**
@@ -99,10 +99,10 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void modifyName(Long uid, ModifyNameRequest modifyNameRequest) {
-        // TODO 判断名字里是否有敏感词
-//        if (sensitiveWordBs.hasSensitiveWord(modifyNameRequest.getName())){
-//            throw new BusinessException("名字非法");
-//        }
+        // 判断名字里是否有敏感词
+        if (sensitiveWordFilter.hasSensitiveWord(modifyNameRequest.getName())){
+            throw new BusinessException("名字非法");
+        }
         // 判断新名字是否重复
         User oldUser = userDao.getByName(modifyNameRequest.getName());
         if(Objects.nonNull(oldUser)){

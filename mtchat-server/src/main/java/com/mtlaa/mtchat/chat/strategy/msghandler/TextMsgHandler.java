@@ -17,6 +17,7 @@ import com.mtlaa.mtchat.domain.user.entity.User;
 import com.mtlaa.mtchat.domain.user.enums.RoleEnum;
 import com.mtlaa.mtchat.exception.BusinessException;
 import com.mtlaa.mtchat.user.service.RoleService;
+import com.mtlaa.mtchat.utils.sensitive.SensitiveWordFilter;
 import com.mtlaa.mtchat.utils.urldiscover.PrioritizedUrlDiscover;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -40,8 +41,8 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
     private UserInfoCache userInfoCache;
     @Autowired
     private RoleService roleService;
-//    @Autowired
-//    private SensitiveWordBs sensitiveWordBs;
+    @Autowired
+    private SensitiveWordFilter sensitiveWordFilter;
 
     private static final PrioritizedUrlDiscover URL_TITLE_DISCOVER = new PrioritizedUrlDiscover();
 
@@ -105,8 +106,8 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
         MessageExtra extra = Optional.ofNullable(msg.getExtra()).orElse(new MessageExtra());
         Message update = new Message();
         update.setId(msg.getId());
-        // TODO 敏感词过滤
-        update.setContent(body.getContent());
+        // 敏感词过滤
+        update.setContent(sensitiveWordFilter.filter(body.getContent()));
         update.setExtra(extra);
         //如果有回复消息
         if (Objects.nonNull(body.getReplyMsgId())) {

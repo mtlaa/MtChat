@@ -57,6 +57,17 @@ rocketmq:
 mtchat:
   jwt:
     secret-key: ${mtchat.jwt.secret-key}
+  thread-pool:
+    common:
+      core-pool-size: 5
+      max-pool-size: 10
+      queue-capacity: 500
+      thread-name-prefix: mtchat-executor-
+    websocket-push:
+      core-pool-size: 5
+      max-pool-size: 10
+      queue-capacity: 500
+      thread-name-prefix: websocket-push-executor-
 
 mybatis-plus:
   configuration:
@@ -79,3 +90,6 @@ oss:
   access-key: ${oss-dev.access-key}
   secret-key: ${oss-dev.secret-key}
   bucket-name: ${oss-dev.bucketName}
+
+sensitive-word:
+  type: ac

@@ -7,8 +7,9 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 // 实现群聊在线人数查询：在redis中使用一个string类型的key，记录当前在线的人数，在用户上线下线时的事件监听器中对缓存进行异步的处理，上线+1，下线-1
-// TODO 敏感词过滤
-// TODO 线程池推送
+// 敏感词过滤：实现了DFA和AC自动机，可以忽略大小写，以及特殊字符欺骗。AC自动机加载速度慢35%，但是过滤速度更快，快大约30%（与敏感词有关）
+// 线程池推送：统一管理项目线程池，通用线程池的bean使用@Primary注解，使其优先被使用。使用Spring提供的线程池，因为其提供了优雅停机的功能；
+//              使用装饰器模式在不修改Spring线程工厂的前提下，创建自定义的线程工厂，设置线程的异常捕获
 // TODO 分布式锁注解
 // TODO 限流注解
 // TODO 权限管理注解
