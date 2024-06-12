@@ -36,12 +36,15 @@ public class SecureInvokeService {
 
     private final SecureInvokeRecordDao secureInvokeRecordDao;
 
+    /**
+     * 项目的统一通用线程池
+     */
     private final Executor executor;
 
     /**
      * Spring的定时任务，每5秒自动执行一次
      */
-    @Scheduled(cron = "1 * * * * ?")
+    @Scheduled(cron = "1 * * * * ?")  // TODO 现在是每分钟执行一次
     public void retry() {
         log.info("本地消息表，自动执行确保最终一致性...");
         // 查询出需要重试的记录
@@ -51,10 +54,19 @@ public class SecureInvokeService {
         }
     }
 
+    /**
+     * 当第一次执行时，把执行记录入库
+     * @param record 方法执行记录
+     */
     public void save(SecureInvokeRecord record) {
         secureInvokeRecordDao.save(record);
     }
 
+    /**
+     * 执行失败时，更新记录，更新重试的次数以及下一次重试的时间
+     * @param record 方法执行记录
+     * @param errorMsg 执行失败时的错误消息
+     */
     private void retryRecord(SecureInvokeRecord record, String errorMsg) {
         Integer retryTimes = record.getRetryTimes() + 1;
         SecureInvokeRecord update = new SecureInvokeRecord();
@@ -69,11 +81,20 @@ public class SecureInvokeService {
         secureInvokeRecordDao.updateById(update);  // 更新记录，等待下一次重试
     }
 
+    /**
+     * 获取下一次重试的时间。采用指数上升算法 或者 类似于TCP重传中每次时间为上次的2倍
+     * @param retryTimes 重试的次数
+     * @return 下次重试的时间
+     */
     private Date getNextRetryTime(Integer retryTimes) {//或者可以采用退避算法
         double waitMinutes = Math.pow(RETRY_INTERVAL_MINUTES, retryTimes);//重试时间指数上升 2m 4m 8m 16m
         return DateUtil.offsetMinute(new Date(), (int) waitMinutes);
     }
 
+    /**
+     * 执行成功删除记录
+     * @param id 记录id
+     */
     private void removeRecord(Long id) {
         secureInvokeRecordDao.removeById(id);
     }
@@ -103,6 +124,10 @@ public class SecureInvokeService {
         });
     }
 
+    /**
+     * 异步执行方法
+     * @param record 方法记录
+     */
     public void doAsyncInvoke(SecureInvokeRecord record) {
         executor.execute(() -> {
             System.out.println(Thread.currentThread().getName());
@@ -111,7 +136,7 @@ public class SecureInvokeService {
     }
 
     /**
-     * 执行record中记录的方法
+     * 同步执行record中记录的方法
      * @param record 方法执行记录
      */
     public void doInvoke(SecureInvokeRecord record) {
@@ -119,12 +144,13 @@ public class SecureInvokeService {
         try {
             SecureInvokeHolder.setInvoking();  // 设置一个标志，表明本线程已经执行过record中的方法（不在事务内）
             Class<?> beanClass = Class.forName(secureInvokeDTO.getClassName());
-            Object bean = SpringUtil.getBean(beanClass);
+            Object bean = SpringUtil.getBean(beanClass); // 通过Spring获取目标方法所在的bean，获取的是代理对象，
+                                                         // 因此通过该对象使用反射执行方法也会进入到切面
             List<String> parameterStrings = JsonUtils.toList(secureInvokeDTO.getParameterTypes(), String.class);
             List<Class<?>> parameterClasses = getParameters(parameterStrings);
             Method method = ReflectUtil.getMethod(beanClass, secureInvokeDTO.getMethodName(), parameterClasses.toArray(new Class[]{}));
             Object[] args = getArgs(secureInvokeDTO, parameterClasses);
-            //执行方法
+            //执行方法，会进入到 SecureInvokeAspect 切面。（由于当前线程设置了一个状态，进入到切面后会直接执行原本方法，不会再次入库执行记录）
             method.invoke(bean, args);
             //执行成功更新状态，即这条record没用了，直接删除
             removeRecord(record.getId());
@@ -138,6 +164,12 @@ public class SecureInvokeService {
         }
     }
 
+    /**
+     * 使用 jackson 把json字符串格式的的参数值转换为JsonNode，然后再根据参数类型把JsonNode转为对象
+     * @param secureInvokeDTO 包含参数值（json字符串）
+     * @param parameterClasses 参数的类型
+     * @return 参数对象数组
+     */
     @NotNull
     private Object[] getArgs(SecureInvokeDTO secureInvokeDTO, List<Class<?>> parameterClasses) {
         JsonNode jsonNode = JsonUtils.toJsonNode(secureInvokeDTO.getArgs());
@@ -149,6 +181,11 @@ public class SecureInvokeService {
         return args;
     }
 
+    /**
+     * 使用 Class 类获取参数类型字符串名对应的Class对象
+     * @param parameterStrings 类型名
+     * @return clazz对象
+     */
     @NotNull
     private List<Class<?>> getParameters(List<String> parameterStrings) {
         return parameterStrings.stream().map(name -> {

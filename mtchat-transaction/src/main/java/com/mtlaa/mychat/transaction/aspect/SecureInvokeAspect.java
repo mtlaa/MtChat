@@ -42,7 +42,7 @@ public class SecureInvokeAspect {
     public Object around(ProceedingJoinPoint joinPoint, SecureInvoke secureInvoke) throws Throwable {
         boolean async = secureInvoke.async();
         boolean inTransaction = TransactionSynchronizationManager.isActualTransactionActive();
-        //非事务状态，直接执行，不做任何保证。
+        // 非事务状态，直接执行，不做任何保证。（即当前方法不是第一次执行，是后续重试，不需要再把方法执行记录入库）
         if (SecureInvokeHolder.isInvoking() || !inTransaction) {
             return joinPoint.proceed();
         }

@@ -1,6 +1,7 @@
 package com.mtlaa.mtchat.user.service.impl;
 
 
+import com.mtlaa.mtchat.annotation.RedissonLock;
 import com.mtlaa.mtchat.domain.user.entity.UserBackpack;
 import com.mtlaa.mtchat.domain.user.enums.IdempotentEnum;
 import com.mtlaa.mtchat.user.dao.UserBackpackDao;
@@ -27,7 +28,7 @@ public class UserBackpackServiceImpl implements UserBackpackService {
      * @param businessId 幂等唯一标识，如用户id、消息id
      */
     @Override
-//    @RedissonLock(key = "#uid", waitTime = 5000)  // TODO 分布式锁注解
+    @RedissonLock(key = "#uid", waitTime = 2000)  // 分布式锁注解 TODO 压测幂等
     @Transactional
     public void acquireItem(Long uid, Long itemId, IdempotentEnum idempotentEnum, String businessId){
         String idempotent = getIdempotent(itemId, idempotentEnum, businessId);

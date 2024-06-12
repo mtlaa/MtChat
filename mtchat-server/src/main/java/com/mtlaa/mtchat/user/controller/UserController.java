@@ -5,12 +5,14 @@ package com.mtlaa.mtchat.user.controller;
 import com.mtlaa.mtchat.domain.common.vo.response.ApiResult;
 import com.mtlaa.mtchat.domain.user.dto.ItemInfoDTO;
 import com.mtlaa.mtchat.domain.user.dto.SummeryInfoDTO;
+import com.mtlaa.mtchat.domain.user.enums.IdempotentEnum;
 import com.mtlaa.mtchat.domain.user.enums.RoleEnum;
 import com.mtlaa.mtchat.domain.user.vo.request.*;
 import com.mtlaa.mtchat.domain.user.vo.response.BadgeResponse;
 import com.mtlaa.mtchat.domain.user.vo.response.UserInfoResponse;
 import com.mtlaa.mtchat.exception.BusinessException;
 import com.mtlaa.mtchat.user.service.RoleService;
+import com.mtlaa.mtchat.user.service.UserBackpackService;
 import com.mtlaa.mtchat.user.service.UserService;
 import com.mtlaa.mtchat.utils.RequestHolder;
 import io.swagger.annotations.Api;
@@ -40,9 +42,18 @@ public class  UserController {
     private UserService userService;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private UserBackpackService userBackpackService;
+
+    @GetMapping("/addBadge")
+    public ApiResult<?> addBadge(){
+        userBackpackService.acquireItem(10003L, 1L, IdempotentEnum.UID, Long.toString(10003));
+        return ApiResult.success();
+    }
+
     
     @GetMapping("/public/test")
-    private ApiResult<String> test(){
+    public ApiResult<String> test(){
         log.info("测试公开请求....IP:{}", RequestHolder.get().getIp());
         return ApiResult.success(RequestHolder.get().getIp());
     }

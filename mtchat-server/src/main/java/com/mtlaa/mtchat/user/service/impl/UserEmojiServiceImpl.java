@@ -1,6 +1,7 @@
 package com.mtlaa.mtchat.user.service.impl;
 
 
+import com.mtlaa.mtchat.annotation.RedissonLock;
 import com.mtlaa.mtchat.domain.user.entity.UserEmoji;
 import com.mtlaa.mtchat.domain.user.vo.request.UserEmojiReq;
 import com.mtlaa.mtchat.domain.user.vo.response.UserEmojiResp;
@@ -44,7 +45,7 @@ public class UserEmojiServiceImpl implements UserEmojiService {
      * @return 该表情在 user_emoji中的 id
      */
     @Override
-//    @RedissonLock(key = "#uid")  // TODO 分布式锁
+    @RedissonLock(key = "#uid")  // 分布式锁
     public Long insert(Long uid, UserEmojiReq req) {
         // 检查是否超过30个表情包
         int count = userEmojiDao.countByUid(uid);
