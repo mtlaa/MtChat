@@ -25,14 +25,25 @@ public class RoomGroupCache extends AbstractRedisStringCache<Long, RoomGroup> {
         return RedisKey.getKey(RedisKey.GROUP_INFO_STRING, roomId);
     }
 
+    /**
+     * 传进来的是roomId
+     * @param roomIds roomIds
+     * @return map
+     */
     @Override
-    protected Map<Long, RoomGroup> load(List<Long> ids) {
-        List<RoomGroup> roomGroups = roomGroupDao.listByIds(ids);
+    protected Map<Long, RoomGroup> load(List<Long> roomIds) {
+        List<RoomGroup> roomGroups = roomGroupDao.listByRoomIds(roomIds);
         return roomGroups.stream().collect(Collectors.toMap(RoomGroup::getRoomId, Function.identity()));
     }
 
     @Override
     protected Long getExpireSeconds() {
         return 5 * 60L;
+    }
+
+    @Override
+    public void remove(Long roomId) {
+        roomGroupDao.removeByRoomId(roomId);
+        delete(roomId);
     }
 }

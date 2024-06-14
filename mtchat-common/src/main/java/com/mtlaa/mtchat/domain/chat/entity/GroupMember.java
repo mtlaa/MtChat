@@ -1,8 +1,7 @@
 package com.mtlaa.mtchat.domain.chat.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -16,6 +15,9 @@ import java.time.LocalDateTime;
  * @since 2023-12-25
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @TableName("group_member")
 public class GroupMember implements Serializable {

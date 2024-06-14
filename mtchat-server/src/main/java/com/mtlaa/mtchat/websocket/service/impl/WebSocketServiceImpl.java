@@ -152,8 +152,8 @@ public class WebSocketServiceImpl implements WebSocketService {
     public void handleAuthorizeJwt(Channel channel, String token) {
         log.info("websocket握手成功,进行认证..., jwt:{}", token);
         // TODO 测试环境免扫码
-//        Long userId = loginService.getValidUid(token);
-        Long userId = 10003L;
+        Long userId = loginService.getValidUid(token);
+//        Long userId = 10003L;
         if(userId == null){
             // 返回消息，需要重新登录
             log.info("解析jwt失败");

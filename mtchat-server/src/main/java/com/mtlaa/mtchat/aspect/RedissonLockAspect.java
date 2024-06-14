@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
@@ -17,6 +16,7 @@ import java.lang.reflect.Method;
 
 /**
  * 分布式锁的切面，生成锁的key，然后加锁执行原方法
+ * @see RedissonLock
  */
 @Aspect
 @Order(0)

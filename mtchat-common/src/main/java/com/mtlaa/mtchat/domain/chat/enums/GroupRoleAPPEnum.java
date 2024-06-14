@@ -25,7 +25,7 @@ public enum GroupRoleAPPEnum {
     private final Integer type;
     private final String desc;
 
-    private static Map<Integer, GroupRoleAPPEnum> cache;
+    private static final Map<Integer, GroupRoleAPPEnum> cache;
 
     static {
         cache = Arrays.stream(GroupRoleAPPEnum.values()).collect(Collectors.toMap(GroupRoleAPPEnum::getType, Function.identity()));

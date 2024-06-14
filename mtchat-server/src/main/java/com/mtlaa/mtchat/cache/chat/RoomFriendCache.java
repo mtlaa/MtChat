@@ -33,6 +33,6 @@ public class RoomFriendCache extends AbstractRedisStringCache<Long, RoomFriend> 
 
     @Override
     protected Long getExpireSeconds() {
-        return 6 * 60L;
+        return 3 * 60L;
     }
 }

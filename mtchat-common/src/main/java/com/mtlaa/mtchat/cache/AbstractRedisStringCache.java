@@ -45,6 +45,7 @@ public abstract class AbstractRedisStringCache<IN, OUT> implements BatchCache<IN
 
     /**
      * 旁路缓存（批量缓存框架）：批量从Redis查询缓存，或从数据库查询数据更新缓存
+     * <p>req: roomId</p>
      */
     @Override
     public Map<IN, OUT> getBatch(List<IN> req) {
@@ -97,5 +98,13 @@ public abstract class AbstractRedisStringCache<IN, OUT> implements BatchCache<IN
     public void deleteBatch(List<IN> req) {
         List<String> keys = req.stream().map(this::getKey).collect(Collectors.toList());
         RedisUtils.del(keys);
+    }
+
+    /**
+     * 删除数据库、同时删除缓存。默认实现为--只删除缓存
+     * @param req id
+     */
+    public void remove(IN req){
+        delete(req);
     }
 }

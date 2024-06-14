@@ -8,8 +8,8 @@ import com.mtlaa.mtchat.cache.user.UserInfoCache;
 import com.mtlaa.mtchat.chat.dao.ContactDao;
 import com.mtlaa.mtchat.chat.dao.GroupMemberDao;
 import com.mtlaa.mtchat.chat.dao.MessageDao;
-import com.mtlaa.mtchat.chat.strategy.msghandler.AbstractMsgHandler;
-import com.mtlaa.mtchat.chat.strategy.msghandler.MsgHandlerFactory;
+import com.mtlaa.mtchat.strategy.msghandler.AbstractMsgHandler;
+import com.mtlaa.mtchat.strategy.msghandler.MsgHandlerFactory;
 import com.mtlaa.mtchat.chat.service.ContactService;
 import com.mtlaa.mtchat.chat.service.RoomService;
 import com.mtlaa.mtchat.domain.chat.dto.RoomBaseInfo;
@@ -27,18 +27,15 @@ import com.mtlaa.mtchat.domain.common.vo.response.CursorPageBaseResp;
 import com.mtlaa.mtchat.domain.user.entity.User;
 import com.mtlaa.mtchat.exception.BusinessException;
 import com.mtlaa.mtchat.user.dao.UserDao;
+import com.mtlaa.mtchat.utils.DateUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import com.mtlaa.mtchat.domain.chat.entity.Contact;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
@@ -151,10 +148,10 @@ public class ContactServiceImpl implements ContactService {
             throw new BusinessException("房间号有误");
         }
         List<Long> memberUidList;
+        RoomGroup roomGroup = roomGroupCache.get(request.getRoomId());
         if (room.isHotRoom()) {// 全员群展示所有用户
             memberUidList = userDao.getAllUid();
         } else {// 只展示房间内的群成员
-            RoomGroup roomGroup = roomGroupCache.get(request.getRoomId());
             memberUidList = groupMemberDao.getMemberUidList(roomGroup.getId());
         }
         Map<Long, User> userMap = userInfoCache.getBatch(memberUidList);
@@ -162,8 +159,10 @@ public class ContactServiceImpl implements ContactService {
             ChatMemberResp chatMemberResp = new ChatMemberResp();
             chatMemberResp.setUid(user.getId());
             chatMemberResp.setActiveStatus(user.getActiveStatus());
+            chatMemberResp.setLastOptTime(DateUtil.LocalDateTime2Date(user.getLastOptTime()));
+            if (!room.isHotRoom())
+                chatMemberResp.setRoleId(groupMemberDao.getByUidAndGroupId(user.getId(), roomGroup.getId()).getRole());
             return chatMemberResp;
-
         }).collect(Collectors.toList());
         return new CursorPageBaseResp<>(null, true, respList);
     }

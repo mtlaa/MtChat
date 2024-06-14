@@ -29,8 +29,8 @@ public class JwtInterceptor implements HandlerInterceptor {
                              HttpServletResponse response, Object handler) throws Exception {
         String token = getJwt(request);
         // TODO 测试环境免认证
-//        Long uid = loginService.getValidUid(token);
-        Long uid = 10003L;
+        Long uid = loginService.getValidUid(token);
+//        Long uid = 10003L;
         if(uid != null){
             // 校验成功，保存到HttpServletRequest
             request.setAttribute(UID, uid);

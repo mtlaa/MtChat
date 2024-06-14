@@ -1,10 +1,7 @@
 package com.mtlaa.mtchat.domain.chat.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -18,6 +15,7 @@ import java.util.Date;
  * @since 2023-12-21
  */
 @Data
+@Builder
 @EqualsAndHashCode(callSuper = false)
 @TableName("room_group")
 @NoArgsConstructor

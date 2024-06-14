@@ -2,6 +2,7 @@ package com.mtlaa.mtchat.chat.controller;
 
 
 
+import com.mtlaa.mtchat.annotation.RateLimiter;
 import com.mtlaa.mtchat.chat.service.ContactService;
 import com.mtlaa.mtchat.domain.chat.vo.request.ContactFriendReq;
 import com.mtlaa.mtchat.domain.chat.vo.response.ChatRoomResp;
@@ -38,6 +39,7 @@ public class ContactController {
 
     @GetMapping("/public/contact/page")
     @ApiOperation("会话列表")
+    @RateLimiter(prefix = "contactPage", target = RateLimiter.Target.IP, policy = RateLimiter.Policy.TOKEN_BUCKET)
     public ApiResult<CursorPageBaseResp<ChatRoomResp>> getRoomPage(@Valid CursorPageBaseReq request) {
         Long uid = RequestHolder.get().getUid();
         return ApiResult.success(contactService.getContactPage(request, uid));

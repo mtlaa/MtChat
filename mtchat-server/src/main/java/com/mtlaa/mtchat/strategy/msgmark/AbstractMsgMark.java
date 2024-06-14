@@ -1,8 +1,7 @@
-package com.mtlaa.mtchat.chat.strategy.msgmark;
+package com.mtlaa.mtchat.strategy.msgmark;
 
 import com.mtlaa.mtchat.chat.dao.MessageMarkDao;
 import com.mtlaa.mtchat.domain.chat.entity.MessageMark;
-import com.mtlaa.mtchat.domain.chat.enums.MessageMarkActTypeEnum;
 import com.mtlaa.mtchat.domain.chat.enums.MessageMarkTypeEnum;
 import com.mtlaa.mtchat.domain.common.enums.NormalOrNoEnum;
 import com.mtlaa.mtchat.exception.BusinessException;

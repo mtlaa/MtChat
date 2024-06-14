@@ -35,4 +35,14 @@ public class RoomCache extends AbstractRedisStringCache<Long, Room> {
     protected Long getExpireSeconds() {
         return 10 * 60L;
     }
+
+    /**
+     * 覆盖：同时删除数据库和缓存
+     * @param roomId id
+     */
+    @Override
+    public void remove(Long roomId) {
+        roomDao.removeById(roomId);
+        delete(roomId);
+    }
 }

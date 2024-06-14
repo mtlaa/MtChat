@@ -1,4 +1,4 @@
-package com.mtlaa.mtchat.chat.strategy.msgmark;
+package com.mtlaa.mtchat.strategy.msgmark;
 
 import com.mtlaa.mtchat.domain.chat.enums.MessageMarkTypeEnum;
 

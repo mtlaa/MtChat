@@ -1,53 +1,51 @@
-package com.mtlaa.mtchat.chat.strategy.msghandler;
-
+package com.mtlaa.mtchat.strategy.msghandler;
 
 
 import com.mtlaa.mtchat.cache.chat.MsgCache;
 import com.mtlaa.mtchat.domain.chat.entity.Message;
+import com.mtlaa.mtchat.domain.chat.entity.msg.FileMsgDTO;
+import com.mtlaa.mtchat.domain.chat.entity.msg.MessageExtra;
 import com.mtlaa.mtchat.domain.chat.enums.MessageTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 /**
- * Description:系统消息
- * Author: <a href="https://github.com/zongzibinbin">abin</a>
- * Date: 2023-06-04
+ * 文件消息
  */
 @Component
-public class SystemMsgHandler extends AbstractMsgHandler<String> {
+public class FileMsgHandler extends AbstractMsgHandler<FileMsgDTO> {
     @Autowired
     private MsgCache msgCache;
 
     @Override
     MessageTypeEnum getMsgTypeEnum() {
-        return MessageTypeEnum.SYSTEM;
+        return MessageTypeEnum.FILE;
     }
 
-    /**
-     * 系统消息，只有消息内容
-     * @param msg 消息的通用信息
-     * @param body 消息体以及额外信息
-     */
     @Override
-    public void saveMsg(Message msg, String body) {
+    public void saveMsg(Message msg, FileMsgDTO body) {
+        MessageExtra extra = Optional.ofNullable(msg.getExtra()).orElse(new MessageExtra());
         Message update = new Message();
         update.setId(msg.getId());
-        update.setContent(body);
+        update.setExtra(extra);
+        extra.setFileMsg(body);
         msgCache.updateById(update);
     }
 
     @Override
     public Object showMsg(Message msg) {
-        return msg.getContent();
+        return msg.getExtra().getFileMsg();
     }
 
     @Override
     public Object showReplyMsg(Message msg) {
-        return msg.getContent();
+        return "文件:" + msg.getExtra().getFileMsg().getFileName();
     }
 
     @Override
     public String showContactMsg(Message msg) {
-        return msg.getContent();
+        return "[文件]" + msg.getExtra().getFileMsg().getFileName();
     }
 }

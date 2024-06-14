@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements Serializable {
+    public static final Long SYSTEM_UID = 1L;
 
     private static final long serialVersionUID = 1L;
 

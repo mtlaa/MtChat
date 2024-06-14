@@ -1,4 +1,4 @@
-package com.mtlaa.mtchat.chat.strategy.msghandler;
+package com.mtlaa.mtchat.strategy.msghandler;
 
 import cn.hutool.core.collection.CollectionUtil;
 

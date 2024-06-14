@@ -1,6 +1,8 @@
 package com.mtlaa.mtchat.chat.controller;
 
 
+import cn.hutool.core.collection.CollectionUtil;
+import com.mtlaa.mtchat.annotation.RateLimiter;
 import com.mtlaa.mtchat.chat.service.ChatService;
 import com.mtlaa.mtchat.domain.chat.dto.MsgReadInfoDTO;
 import com.mtlaa.mtchat.domain.chat.vo.request.*;
@@ -16,7 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Create 2023/12/25 14:10
@@ -31,6 +35,7 @@ public class ChatController {
 
     @PostMapping("/msg")
     @ApiOperation("发送消息")
+    @RateLimiter(target = RateLimiter.Target.UID, count = 5, rate = 0.5, policy = RateLimiter.Policy.TOKEN_BUCKET)
     public ApiResult<ChatMessageResp> sendMsg(@RequestBody @Valid ChatMessageReq chatMessageReq){
         Long msgId = chatService.sendMsg(RequestHolder.get().getUid(), chatMessageReq);
         return ApiResult.success(chatService.getMsgResponse(msgId, RequestHolder.get().getUid()));

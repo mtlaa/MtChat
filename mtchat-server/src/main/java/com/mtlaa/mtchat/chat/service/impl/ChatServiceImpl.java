@@ -11,12 +11,13 @@ import com.mtlaa.mtchat.cache.chat.RoomGroupCache;
 import com.mtlaa.mtchat.cache.user.UserCache;
 import com.mtlaa.mtchat.chat.adapter.MessageAdapter;
 import com.mtlaa.mtchat.chat.dao.*;
-import com.mtlaa.mtchat.chat.strategy.msghandler.AbstractMsgHandler;
-import com.mtlaa.mtchat.chat.strategy.msghandler.MsgHandlerFactory;
-import com.mtlaa.mtchat.chat.strategy.msghandler.RecallMsgHandler;
+import com.mtlaa.mtchat.domain.user.entity.User;
+import com.mtlaa.mtchat.strategy.msghandler.AbstractMsgHandler;
+import com.mtlaa.mtchat.strategy.msghandler.MsgHandlerFactory;
+import com.mtlaa.mtchat.strategy.msghandler.RecallMsgHandler;
 import com.mtlaa.mtchat.chat.service.ChatService;
-import com.mtlaa.mtchat.chat.strategy.msgmark.AbstractMsgMark;
-import com.mtlaa.mtchat.chat.strategy.msgmark.MsgMarkFactory;
+import com.mtlaa.mtchat.strategy.msgmark.AbstractMsgMark;
+import com.mtlaa.mtchat.strategy.msgmark.MsgMarkFactory;
 import com.mtlaa.mtchat.domain.chat.dto.MsgReadInfoDTO;
 import com.mtlaa.mtchat.domain.chat.entity.*;
 import com.mtlaa.mtchat.domain.chat.enums.MessageMarkActTypeEnum;
@@ -193,8 +194,12 @@ public class ChatServiceImpl implements ChatService {
      */
     @Override
     public Collection<MsgReadInfoDTO> getMsgReadInfo(Long uid, ChatMessageReadInfoReq request) {
-        Map<Long, Message> messageMap = msgCache.getBatch(request.getMsgIds());
-        return request.getMsgIds().stream().map(msgId -> {
+        // 截断
+        List<Long> subList = request.getMsgIds();
+        if (subList.size() > 20)
+            subList = request.getMsgIds().subList(request.getMsgIds().size() - 20, request.getMsgIds().size());
+        Map<Long, Message> messageMap = msgCache.getBatch(subList);
+        return subList.stream().map(msgId -> {
             Message message = messageMap.get(msgId);
             Integer readCount = contactDao.countRead(message.getRoomId(), uid, message.getCreateTime());
             Integer unreadCount = contactDao.countUnread(message.getRoomId(), uid, message.getCreateTime());
@@ -292,7 +297,7 @@ public class ChatServiceImpl implements ChatService {
      */
     private void check(Long uid, ChatMessageReq chatMessageReq){
         Room room = roomCache.get(chatMessageReq.getRoomId());
-        if(room.isHotRoom()){
+        if(room.isHotRoom() || uid.equals(User.SYSTEM_UID)){
             return;
         }
         if(room.isRoomFriend()){

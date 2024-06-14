@@ -1,5 +1,6 @@
 package com.mtlaa.mtchat.domain.chat.vo.response.wsMsg;
 
+import com.mtlaa.mtchat.domain.websocket.enums.WebSocketResponseTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,7 @@ public class WSBaseResp<T> {
     /**
      * ws推送给前端的消息
      *
-     * @see com.mtlaa.mychat.websocket.domain.enums.WebSocketResponseTypeEnum
+     * @see WebSocketResponseTypeEnum
      */
     private Integer type;
     private T data;

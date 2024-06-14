@@ -1,8 +1,8 @@
 package com.mtlaa.mtchat.chat.adapter;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.mtlaa.mtchat.chat.strategy.msghandler.AbstractMsgHandler;
-import com.mtlaa.mtchat.chat.strategy.msghandler.MsgHandlerFactory;
+import com.mtlaa.mtchat.strategy.msghandler.AbstractMsgHandler;
+import com.mtlaa.mtchat.strategy.msghandler.MsgHandlerFactory;
 import com.mtlaa.mtchat.domain.chat.entity.Message;
 import com.mtlaa.mtchat.domain.chat.entity.MessageMark;
 import com.mtlaa.mtchat.domain.chat.enums.MessageMarkTypeEnum;

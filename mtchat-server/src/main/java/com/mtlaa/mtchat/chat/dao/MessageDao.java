@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.mtlaa.mtchat.chat.mapper.MessageMapper;
 import com.mtlaa.mtchat.domain.chat.entity.Message;
+import com.mtlaa.mtchat.domain.chat.enums.MessageStatusEnum;
 import com.mtlaa.mtchat.domain.chat.vo.request.ChatMessagePageReq;
 import com.mtlaa.mtchat.domain.common.enums.NormalOrNoEnum;
 import com.mtlaa.mtchat.domain.common.vo.response.CursorPageBaseResp;
@@ -44,5 +45,11 @@ public class MessageDao extends ServiceImpl<MessageMapper, Message> {
                 .eq(Message::getRoomId, roomId)
                 .gt(Objects.nonNull(readTime), Message::getCreateTime, readTime)
                 .count();
+    }
+
+    public void removeByRoomIdLogic(Long roomId) {
+        lambdaUpdate().eq(Message::getRoomId, roomId)
+                .set(Message::getStatus, MessageStatusEnum.DELETE.getStatus())
+                .update();
     }
 }

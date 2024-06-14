@@ -30,7 +30,7 @@ public class WSMemberChange {
      */
     private Integer changeType;
     /**
-     * @see com.abin.mallchat.common.user.domain.enums.ChatActiveStatusEnum
+     * @see com.mtlaa.mtchat.domain.user.enums.UserActiveStatusEnum
      * 在线状态 1在线 2离线
      */
     private Integer activeStatus;

@@ -1,9 +1,9 @@
-package com.mtlaa.mtchat.chat.strategy.msghandler;
+package com.mtlaa.mtchat.strategy.msghandler;
 
 
 import com.mtlaa.mtchat.cache.chat.MsgCache;
 import com.mtlaa.mtchat.domain.chat.entity.Message;
-import com.mtlaa.mtchat.domain.chat.entity.msg.FileMsgDTO;
+import com.mtlaa.mtchat.domain.chat.entity.msg.EmojisMsgDTO;
 import com.mtlaa.mtchat.domain.chat.entity.msg.MessageExtra;
 import com.mtlaa.mtchat.domain.chat.enums.MessageTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,40 +12,40 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 /**
- * 文件消息
+ * Description:表情消息
  */
 @Component
-public class FileMsgHandler extends AbstractMsgHandler<FileMsgDTO> {
+public class EmojisMsgHandler extends AbstractMsgHandler<EmojisMsgDTO> {
     @Autowired
     private MsgCache msgCache;
 
     @Override
     MessageTypeEnum getMsgTypeEnum() {
-        return MessageTypeEnum.FILE;
+        return MessageTypeEnum.EMOJI;
     }
 
     @Override
-    public void saveMsg(Message msg, FileMsgDTO body) {
+    public void saveMsg(Message msg, EmojisMsgDTO body) {
         MessageExtra extra = Optional.ofNullable(msg.getExtra()).orElse(new MessageExtra());
         Message update = new Message();
         update.setId(msg.getId());
         update.setExtra(extra);
-        extra.setFileMsg(body);
+        extra.setEmojisMsgDTO(body);
         msgCache.updateById(update);
     }
 
     @Override
     public Object showMsg(Message msg) {
-        return msg.getExtra().getFileMsg();
+        return msg.getExtra().getEmojisMsgDTO();
     }
 
     @Override
     public Object showReplyMsg(Message msg) {
-        return "文件:" + msg.getExtra().getFileMsg().getFileName();
+        return "[图片表情]";
     }
 
     @Override
     public String showContactMsg(Message msg) {
-        return "[文件]" + msg.getExtra().getFileMsg().getFileName();
+        return "[图片表情]";
     }
 }

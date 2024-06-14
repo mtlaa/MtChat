@@ -1,10 +1,10 @@
-package com.mtlaa.mtchat.chat.strategy.msghandler;
+package com.mtlaa.mtchat.strategy.msghandler;
 
 
 import com.mtlaa.mtchat.cache.chat.MsgCache;
 import com.mtlaa.mtchat.domain.chat.entity.Message;
-import com.mtlaa.mtchat.domain.chat.entity.msg.EmojisMsgDTO;
 import com.mtlaa.mtchat.domain.chat.entity.msg.MessageExtra;
+import com.mtlaa.mtchat.domain.chat.entity.msg.SoundMsgDTO;
 import com.mtlaa.mtchat.domain.chat.enums.MessageTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,40 +12,40 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 /**
- * Description:表情消息
+ * Description:语音消息
  */
 @Component
-public class EmojisMsgHandler extends AbstractMsgHandler<EmojisMsgDTO> {
+public class SoundMsgHandler extends AbstractMsgHandler<SoundMsgDTO> {
     @Autowired
     private MsgCache msgCache;
 
     @Override
     MessageTypeEnum getMsgTypeEnum() {
-        return MessageTypeEnum.EMOJI;
+        return MessageTypeEnum.SOUND;
     }
 
     @Override
-    public void saveMsg(Message msg, EmojisMsgDTO body) {
+    public void saveMsg(Message msg, SoundMsgDTO body) {
         MessageExtra extra = Optional.ofNullable(msg.getExtra()).orElse(new MessageExtra());
         Message update = new Message();
         update.setId(msg.getId());
         update.setExtra(extra);
-        extra.setEmojisMsgDTO(body);
+        extra.setSoundMsgDTO(body);
         msgCache.updateById(update);
     }
 
     @Override
     public Object showMsg(Message msg) {
-        return msg.getExtra().getEmojisMsgDTO();
+        return msg.getExtra().getSoundMsgDTO();
     }
 
     @Override
     public Object showReplyMsg(Message msg) {
-        return "[图片表情]";
+        return "[语音消息]";
     }
 
     @Override
     public String showContactMsg(Message msg) {
-        return "[图片表情]";
+        return "[语音消息]";
     }
 }

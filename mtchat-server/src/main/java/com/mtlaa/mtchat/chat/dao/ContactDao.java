@@ -1,5 +1,8 @@
 package com.mtlaa.mtchat.chat.dao;
 
+import cn.hutool.core.collection.CollectionUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.mtlaa.mtchat.chat.mapper.ContactMapper;
@@ -88,5 +91,19 @@ public class ContactDao extends ServiceImpl<ContactMapper, Contact> {
             wrapper.lt(Contact::getReadTime, createTime);
             wrapper.select(Contact::getUid);  // 这样节省带宽是否有问题？   没有
         }, Contact::getReadTime);
+    }
+
+    /**
+     * 删除指定room里指定用户的会话
+     * @param roomId 房间
+     * @param uidList 指定用户，为空则删除所有
+     */
+    public void removeByRoomId(Long roomId, List<Long> uidList) {
+        LambdaQueryWrapper<Contact> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Contact::getRoomId, roomId);
+        if (!CollectionUtil.isEmpty(uidList)){
+            wrapper.in(Contact::getUid, uidList);
+        }
+        remove(wrapper);
     }
 }

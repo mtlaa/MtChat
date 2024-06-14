@@ -33,7 +33,7 @@ public enum WebSocketResponseTypeEnum {
     private final String desc;
     private final Class dataClass;
 
-    private static Map<Integer, WebSocketResponseTypeEnum> cache;
+    private static final Map<Integer, WebSocketResponseTypeEnum> cache;
 
     static {
         cache = Arrays.stream(WebSocketResponseTypeEnum.values()).collect(Collectors.toMap(WebSocketResponseTypeEnum::getType, Function.identity()));
