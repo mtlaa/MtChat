@@ -63,7 +63,8 @@ public class LockService {
         try {
             return supplier.get();
         } finally {
-            lock.unlock();
+            if (lock.isLocked())
+                lock.unlock();
         }
     }
 

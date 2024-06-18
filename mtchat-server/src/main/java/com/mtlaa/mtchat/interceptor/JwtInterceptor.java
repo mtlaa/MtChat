@@ -38,7 +38,8 @@ public class JwtInterceptor implements HandlerInterceptor {
             // FIXME 线上使用nginx代理这里似乎有问题，会判断为非public
             // 校验失败，判断是否是public请求
             String[] split = request.getRequestURI().split("/");
-            boolean isPublic = split.length > 3 && split[3].equals("public");
+            boolean isPublic =
+                    (split.length > 3 && split[3].equals("public")) || (split.length > 4 && split[4].equals("public"));
             if(!isPublic) {
                 // 不是public，返回401的错误消息
                 HttpErrorEnum.ACCESS_DENIED.sendHttpError(response);

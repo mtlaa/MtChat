@@ -28,7 +28,7 @@ public class UserBackpackServiceImpl implements UserBackpackService {
      * @param businessId 幂等唯一标识，如用户id、消息id
      */
     @Override
-    @RedissonLock(key = "#uid", waitTime = 2000)  // 分布式锁注解
+    @RedissonLock(key = "#uid + '_' + #itemId", waitTime = 2000)  // 分布式锁注解
     @Transactional
     public void acquireItem(Long uid, Long itemId, IdempotentEnum idempotentEnum, String businessId){
         String idempotent = getIdempotent(itemId, idempotentEnum, businessId);

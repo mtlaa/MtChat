@@ -84,16 +84,15 @@ black:
 
     public void online(Long id, LocalDateTime lastOptTime) {
         refreshUserModifyTime(id);
-        redisTemplate.opsForValue().increment(RedisKey.getKey(RedisKey.USER_ONLINE_STRING));
+        redisTemplate.opsForSet().add(RedisKey.getKey(RedisKey.USER_ONLINE_SET), id);
     }
 
     public void offline(Long id, LocalDateTime lastOptTime) {
         refreshUserModifyTime(id);
-        redisTemplate.opsForValue().increment(RedisKey.getKey(RedisKey.USER_ONLINE_STRING), -1L);
+        redisTemplate.opsForSet().remove(RedisKey.getKey(RedisKey.USER_ONLINE_SET), id);
     }
 
     public Long getOnlineNum(){
-        return Long.valueOf(Objects.requireNonNull(
-                redisTemplate.opsForValue().get(RedisKey.getKey(RedisKey.USER_ONLINE_STRING))).toString());
+        return redisTemplate.opsForSet().size(RedisKey.getKey(RedisKey.USER_ONLINE_SET));
     }
 }

@@ -15,72 +15,45 @@ import java.util.function.Supplier;
 public class OtherTest {
     @Test
     public void test1() throws InterruptedException {
-        Supplier<String> supplier = this::toString;
-        System.out.println(supplier.get());
-    }
-//    给你二叉树的根节点 root 和一个表示目标和的整数 targetSum 。
-//    判断该树中是否存在 根节点到叶子节点 的路径，这条路径上所有节点值相加等于目标和 targetSum 。如果存在，返回 true ；否则，返回 false 。
-//
-//    叶子节点 是指没有子节点的节点。
-    boolean ret = false;
-    public boolean hasPathSum(TreeNode root, int targetSum) {
-        dfs(root, targetSum);
-        return ret;
-    }
 
-    private void dfs(TreeNode root, int targetSum) {
-        if (root==null){
-            return;
-        }
-        targetSum = targetSum - root.val;
-        if (root.left==null&&root.right==null&&targetSum==0) ret = true;
-        dfs(root.left, targetSum);
-        dfs(root.right, targetSum);
     }
-//    给定一个大小为 n 的数组 nums ，返回其中的多数元素。多数元素是指在数组中出现次数 大于 ⌊ n/2 ⌋ 的元素。
-//    你可以假设数组是非空的，并且给定的数组总是存在多数元素。
-    public int majorityElement(int[] nums) {
-        int ret = nums[0];
-        int count = 1;
-        for (int i = 1; i < nums.length; i++) {
-            if (nums[i]==ret){
-                count++;
-            } else {
-                count--;
-            }
-            if (count == 0){
-                count = 1;
-                ret = nums[i];
-            }
-        }
-        return ret;
-    }
-//    给定一个未排序的整数数组 nums ，找出数字连续的最长序列（不要求序列元素在原数组中连续）的长度。
-//    请你设计并实现时间复杂度为 O(n) 的算法解决此问题。
-    public int longestConsecutive(int[] nums) {
-        Set<Integer> set = new HashSet<>();
+//    给你一棵二叉树的根节点 root ，返回树的 最大宽度 。
+//    树的 最大宽度 是所有层中最大的 宽度 。
+//    每一层的 宽度 被定义为该层最左和最右的非空节点（即，两个端点）之间的长度。
+//    将这个二叉树视作与满二叉树结构相同，两端点间会出现一些延伸到这一层的 null 节点，这些 null 节点也计入长度。
+//    题目数据保证答案将会在  32 位 带符号整数范围内。
+    public int widthOfBinaryTree(TreeNode root) {
+        if (root == null) return 0;
         int ret = 0;
-        for (int num : nums) {
-            set.add(num);
-        }
-        for (int i = 0; i < nums.length; i++) {
-            if (!set.contains(nums[i])){
-                continue;
+        Queue<TreeNode> nodeQueue = new ArrayDeque<>();
+        Queue<Integer> indexQueue = new ArrayDeque<>();
+        nodeQueue.offer(root);
+        indexQueue.offer(1);
+        while (!nodeQueue.isEmpty()){
+            int n = nodeQueue.size();
+            int start = 0, end = 0;
+            for (int i = 0; i < n; i++) {
+                TreeNode node = nodeQueue.poll();
+                Integer index = indexQueue.poll();
+                if (i == 0){
+                    start = index;
+                }
+                if (i == n-1){
+                    end = index;
+                }
+                if (node.left!=null){
+                    nodeQueue.offer(node.left);
+                    indexQueue.offer(index*2);
+                }
+                if (node.right!=null){
+                    nodeQueue.offer(node.right);
+                    indexQueue.offer(index*2+1);
+                }
             }
-            int count = 0;
-            for (int j = nums[i];set.contains(j);j++){
-                count++;
-                set.remove(j);
-            }
-            for (int j = nums[i]-1;set.contains(j);j--){
-                count++;
-                set.remove(j);
-            }
-            ret = Math.max(ret, count);
+            ret = Math.max(ret, end-start+1);
         }
         return ret;
     }
-
 
 
 }

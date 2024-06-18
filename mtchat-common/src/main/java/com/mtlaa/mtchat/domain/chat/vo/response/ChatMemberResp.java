@@ -1,5 +1,6 @@
 package com.mtlaa.mtchat.domain.chat.vo.response;
 
+import com.mtlaa.mtchat.domain.user.enums.UserActiveStatusEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +22,7 @@ public class ChatMemberResp {
     @ApiModelProperty("uid")
     private Long uid;
     /**
-     * @see ChatActiveStatusEnum
+     * @see UserActiveStatusEnum
      */
     @ApiModelProperty("在线状态 1在线 2离线")
     private Integer activeStatus;

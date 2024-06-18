@@ -26,7 +26,7 @@ public class RedisKey {
     /**
      * 在线数量
      */
-    public static final String USER_ONLINE_STRING = "userOnline";
+    public static final String USER_ONLINE_SET = "userOnlineSet";
 
     /**
      * 消息缓存
