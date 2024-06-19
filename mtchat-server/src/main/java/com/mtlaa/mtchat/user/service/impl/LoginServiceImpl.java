@@ -29,13 +29,20 @@ public class LoginServiceImpl implements LoginService {
      */
     @Override
     public String login(Long userId) {
+        // 适配多端登录时，查询Redis中已有的jwt，不用重新生成
+        String key = RedisKey.getKey(RedisKey.USER_TOKEN_KEY, userId);
+        String jwt = RedisUtils.get(key, String.class);
+        if (StrUtil.isNotBlank(jwt)){
+            return jwt;
+        }
+
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", userId);
         // jwt不设置过期时间
-        String jwt = JwtUtil.createJWT(jwtProperties.getSecretKey(), claims);
+        jwt = JwtUtil.createJWT(jwtProperties.getSecretKey(), claims);
 
         // redis key = 'mtchat:userToken:uid_{userid}'
-        RedisUtils.set(RedisKey.getKey(RedisKey.USER_TOKEN_KEY, userId), jwt, 7, TimeUnit.DAYS);
+        RedisUtils.set(key, jwt, 7, TimeUnit.DAYS);
         return jwt;
     }
 

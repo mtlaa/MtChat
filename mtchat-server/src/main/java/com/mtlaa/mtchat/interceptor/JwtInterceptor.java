@@ -35,7 +35,7 @@ public class JwtInterceptor implements HandlerInterceptor {
             // 校验成功，保存到HttpServletRequest
             request.setAttribute(UID, uid);
         }else{
-            // FIXME 线上使用nginx代理这里似乎有问题，会判断为非public
+            // FIXED 线上使用nginx代理这里似乎有问题，会判断为非public
             // 校验失败，判断是否是public请求
             String[] split = request.getRequestURI().split("/");
             boolean isPublic =
