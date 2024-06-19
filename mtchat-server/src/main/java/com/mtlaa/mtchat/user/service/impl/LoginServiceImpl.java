@@ -56,7 +56,7 @@ public class LoginServiceImpl implements LoginService {
      */
     @Override
     public Long getValidUid(String token) {
-        if (token.isEmpty()){
+        if (StrUtil.isBlank(token)){
             return null;
         }
         Claims claims;
