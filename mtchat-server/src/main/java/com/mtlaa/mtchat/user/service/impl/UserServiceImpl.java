@@ -1,6 +1,7 @@
 package com.mtlaa.mtchat.user.service.impl;
 
 
+import com.mtlaa.mtchat.cache.user.BlackCache;
 import com.mtlaa.mtchat.cache.user.ItemCache;
 import com.mtlaa.mtchat.cache.user.UserSummaryCache;
 import com.mtlaa.mtchat.domain.user.dto.ItemInfoDTO;
@@ -69,6 +70,8 @@ public class UserServiceImpl implements UserService {
     private BlackDao blackDao;
     @Autowired
     private SensitiveWordFilter sensitiveWordFilter;
+    @Autowired
+    private BlackCache blackCache;
 
 
     /**
@@ -214,6 +217,11 @@ public class UserServiceImpl implements UserService {
         }).collect(Collectors.toList());
     }
 
+    /**
+     * 拉黑一个人：拉黑uid和ip
+     * <p>采用同步更新策略，先更新数据库，再更新缓存，如果缓存更新失败，会触发mysql回滚</p>
+     * @param blackUid 被拉黑的uid
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void blackUser(Long blackUid) {
@@ -226,11 +234,11 @@ public class UserServiceImpl implements UserService {
         blackDao.save(black);
         // 拉黑ip
         User user = userDao.getById(blackUid);
-        UserServiceImpl proxy = (UserServiceImpl) AopContext.currentProxy();
-        proxy.blackIp(user.getIpInfo().getCreateIp());
+        blackIp(user.getIpInfo().getCreateIp());
         if(!Objects.equals(user.getIpInfo().getCreateIp(), user.getIpInfo().getUpdateIp())) {
-            proxy.blackIp(user.getIpInfo().getUpdateIp());
+            blackIp(user.getIpInfo().getUpdateIp());
         }
+        blackCache.updateRedisBlack(blackUid, user.getIpInfo().getCreateIp(), user.getIpInfo().getUpdateIp());
         // 发出拉黑一个人的事件
         applicationEventPublisher.publishEvent(new UserBlackEvent(this, user));
     }

@@ -12,8 +12,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 //              使用装饰器模式在不修改Spring线程工厂的前提下，创建自定义的线程工厂，设置线程的异常捕获
 // 分布式锁注解：编程实现和注解声明式实现，编程实现更灵活，注解实现更方便。数据库表中使用幂等键，判断幂等键使用分布式锁，保证幂等性
 // 限流注解：见语雀笔记
-// TODO 权限管理注解
-// TODO 黑名单数据使用redis的set存储，实时更新不过期，避免缓存击穿。（使用mq或者本地消息表保证更新不失败）
+// 黑名单数据使用redis的set存储，实时更新不过期，避免缓存击穿。见 BlackCache
 
 
 @SpringBootApplication

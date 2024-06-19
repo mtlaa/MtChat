@@ -26,7 +26,7 @@ public enum ItemEnum {
     private final ItemTypeEnum typeEnum;
     private final String desc;
 
-    private static Map<Long, ItemEnum> cache;
+    private static final Map<Long, ItemEnum> cache;
 
     static {
         cache = Arrays.stream(ItemEnum.values()).collect(Collectors.toMap(ItemEnum::getId, Function.identity()));

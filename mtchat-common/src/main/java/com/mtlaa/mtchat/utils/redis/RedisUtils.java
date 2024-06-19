@@ -527,16 +527,15 @@ public class RedisUtils {
      * @return 成功个数
      */
     public static Long sSet(String key, Object... values) {
-        try {
-            String[] s = new String[values.length];
-            for (int i = 0; i < values.length; i++) {
+        String[] s = new String[values.length];
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] instanceof String){
+                s[i] = (String) values[i];
+            } else{
                 s[i] = objToStr(values[i]);
             }
-            return stringRedisTemplate.opsForSet().add(key, s);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return 0L;
         }
+        return stringRedisTemplate.opsForSet().add(key, s);
     }
 
     /**

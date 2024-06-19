@@ -67,20 +67,20 @@ black:
     uid:
 
  */
-    // TODO 黑名单是热点数据，清除后可能会缓存击穿，使用redis的 set结构存储并实时更新
-    // FIXED 好像不起作用  -- 启动类要加 @EnableCaching 注解
-    // 黑名单数据是需要频繁访问的，本地缓存不设置过期时间。使用注解的Spring cache需要配置文件配置启用
-    @Cacheable(cacheNames = "user", key = "'blackList'")
-    public Map<Integer, Set<String>> getBlackMap() {
-        Map<Integer, List<Black>> collect = blackDao.list().stream().collect(Collectors.groupingBy(Black::getType));
-        Map<Integer, Set<String>> result = new HashMap<>(collect.size());
-        for (Map.Entry<Integer, List<Black>> entry : collect.entrySet()) {
-            result.put(entry.getKey(), entry.getValue().stream().map(Black::getTarget).collect(Collectors.toSet()));
-        }
-        return result;
-    }
-    @CacheEvict(cacheNames = "user", key = "'blackList'")
-    public void evictBlackMap() {}
+//    // 黑名单是热点数据，清除后可能会缓存击穿，使用redis的 set结构存储并实时更新-----已实现：BlackCache二级缓存
+//    // FIXED 好像不起作用  -- 启动类要加 @EnableCaching 注解
+//    // 黑名单数据是需要频繁访问的，本地缓存不设置过期时间。使用注解的Spring cache需要配置文件配置启用
+//    @Cacheable(cacheNames = "user", key = "'blackList'")
+//    public Map<Integer, Set<String>> getBlackMap() {
+//        Map<Integer, List<Black>> collect = blackDao.list().stream().collect(Collectors.groupingBy(Black::getType));
+//        Map<Integer, Set<String>> result = new HashMap<>(collect.size());
+//        for (Map.Entry<Integer, List<Black>> entry : collect.entrySet()) {
+//            result.put(entry.getKey(), entry.getValue().stream().map(Black::getTarget).collect(Collectors.toSet()));
+//        }
+//        return result;
+//    }
+//    @CacheEvict(cacheNames = "user", key = "'blackList'")
+//    public void evictBlackMap() {}
 
     public void online(Long id, LocalDateTime lastOptTime) {
         refreshUserModifyTime(id);

@@ -52,12 +52,12 @@ public class UserBlackListener {
         userCache.refreshUserModifyTime(uid);
     }
 
-    /**
-     * 当前新增了一个被拉黑的用户，所以删除旧的缓存
-     */
-    @Async
-    @EventListener(classes = UserBlackEvent.class)
-    public void deleteCache(UserBlackEvent userBlackEvent){
-        userCache.evictBlackMap();
-    }
+//    /**
+//     * 当前新增了一个被拉黑的用户，所以删除旧的缓存
+//     */
+//    @Async
+//    @EventListener(classes = UserBlackEvent.class)
+//    public void deleteCache(UserBlackEvent userBlackEvent){
+//        userCache.evictBlackMap();
+//    }
 }

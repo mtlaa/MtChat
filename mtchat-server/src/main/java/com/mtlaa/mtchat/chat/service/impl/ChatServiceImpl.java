@@ -8,6 +8,7 @@ import com.mtlaa.mtchat.cache.chat.MsgCache;
 import com.mtlaa.mtchat.cache.chat.RoomCache;
 import com.mtlaa.mtchat.cache.chat.RoomFriendCache;
 import com.mtlaa.mtchat.cache.chat.RoomGroupCache;
+import com.mtlaa.mtchat.cache.user.BlackCache;
 import com.mtlaa.mtchat.cache.user.UserCache;
 import com.mtlaa.mtchat.chat.adapter.MessageAdapter;
 import com.mtlaa.mtchat.chat.dao.*;
@@ -77,6 +78,8 @@ public class ChatServiceImpl implements ChatService {
     private RecallMsgHandler recallMsgHandler;
     @Autowired
     private MessageMarkDao messageMarkDao;
+    @Autowired
+    private BlackCache blackCache;
 
     /**
      * 消息流程：  前端请求  -->  检查权限  -->  检查格式  -->  构造消息体  -->  消息入库
@@ -230,7 +233,6 @@ public class ChatServiceImpl implements ChatService {
     }
 
 
-    // TODO 可以使用权限管理注解
     /**
      * 检查当前用户能否撤回这一条消息
      * @param uid uid
@@ -254,7 +256,7 @@ public class ChatServiceImpl implements ChatService {
      * @param msgPage 一页消息
      */
     private void filterBlackMsg(CursorPageBaseResp<Message> msgPage) {
-        Set<String> blackUidSet = userCache.getBlackMap().getOrDefault(BlackTypeEnum.UID.getType(), new HashSet<>());
+        Set<String> blackUidSet = blackCache.getBlackMap().getOrDefault(BlackTypeEnum.UID.getType(), new HashSet<>());
         msgPage.getList().removeIf(message -> blackUidSet.contains(message.getFromUid().toString()));
     }
 

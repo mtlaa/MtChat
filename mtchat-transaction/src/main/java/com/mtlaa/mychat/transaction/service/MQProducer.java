@@ -8,8 +8,6 @@ import org.springframework.messaging.support.MessageBuilder;
 
 /**
  * Description: 发送mq工具类
- * Author: <a href="https://github.com/zongzibinbin">abin</a>
- * Date: 2023-08-12
  */
 public class MQProducer {
 

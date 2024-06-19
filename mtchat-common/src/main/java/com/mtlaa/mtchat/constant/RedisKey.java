@@ -48,8 +48,19 @@ public class RedisKey {
      */
     public static final String GROUP_INFO_STRING = "groupInfo:roomId_%d";
 
+    /**
+     * 好友信息
+     */
     public static final String FRIEND_INFO_STRING = "friendInfo:roomId_%d";
 
+    /**
+     * 黑名单缓存-uid
+     */
+    public static final String BLACK_USER_UID_SET = "blackUser:uid";
+    /**
+     * 黑名单缓存-ip
+     */
+    public static final String BLACK_USER_IP_SET = "blackUser:ip";
 
     /**
      * 用户的信息更新时间

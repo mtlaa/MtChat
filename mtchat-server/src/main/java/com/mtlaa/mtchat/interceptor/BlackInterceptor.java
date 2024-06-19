@@ -2,6 +2,7 @@ package com.mtlaa.mtchat.interceptor;
 
 import cn.hutool.core.collection.CollectionUtil;
 
+import com.mtlaa.mtchat.cache.user.BlackCache;
 import com.mtlaa.mtchat.domain.common.entity.RequestInfo;
 import com.mtlaa.mtchat.domain.user.enums.BlackTypeEnum;
 import com.mtlaa.mtchat.exception.HttpErrorEnum;
@@ -28,11 +29,11 @@ import java.util.Set;
 public class BlackInterceptor implements HandlerInterceptor {
 
     @Autowired
-    private UserCache userCache;
+    private BlackCache blackCache;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        Map<Integer, Set<String>> blackMap = userCache.getBlackMap();
+        Map<Integer, Set<String>> blackMap = blackCache.getBlackMap();
         RequestInfo requestInfo = RequestHolder.get();
         if (inBlackList(requestInfo.getUid(), blackMap.get(BlackTypeEnum.UID.getType()))) {
             HttpErrorEnum.ACCESS_DENIED.sendHttpError(response);

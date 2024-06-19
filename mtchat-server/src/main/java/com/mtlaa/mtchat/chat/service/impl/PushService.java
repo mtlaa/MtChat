@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-// TODO 没有使用事务框架，可能会失败
+// 没有使用事务框架，可能会失败：但是这些消息并不需要保证可靠，
+// 因为这些消息最终都是要通过websocket推送给前端，即使没有推送，前端页面刷新一下就都拉取了
 /**
  * Description: 推送消息到 MQ
  */
