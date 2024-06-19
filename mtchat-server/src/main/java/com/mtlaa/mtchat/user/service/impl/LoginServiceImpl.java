@@ -49,6 +49,9 @@ public class LoginServiceImpl implements LoginService {
      */
     @Override
     public Long getValidUid(String token) {
+        if (token.isEmpty()){
+            return null;
+        }
         Claims claims;
         try {
             claims = JwtUtil.parseJWT(jwtProperties.getSecretKey(), token);
