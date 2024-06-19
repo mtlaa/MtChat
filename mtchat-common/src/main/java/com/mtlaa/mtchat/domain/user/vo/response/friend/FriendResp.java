@@ -1,5 +1,6 @@
 package com.mtlaa.mtchat.domain.user.vo.response.friend;
 
+import com.mtlaa.mtchat.domain.user.enums.UserActiveStatusEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +10,6 @@ import lombok.NoArgsConstructor;
 
 /**
  * Description: 好友校验
- * Author: <a href="https://github.com/zongzibinbin">abin</a>
- * Date: 2023-03-23
  */
 @Data
 @Builder
@@ -21,7 +20,7 @@ public class FriendResp {
     @ApiModelProperty("好友uid")
     private Long uid;
     /**
-     * @see com.abin.mallchat.common.user.domain.enums.ChatActiveStatusEnum
+     * @see UserActiveStatusEnum
      */
     @ApiModelProperty("在线状态 1在线 2离线")
     private Integer activeStatus;
