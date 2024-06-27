@@ -234,6 +234,9 @@ public class UserServiceImpl implements UserService {
         blackDao.save(black);
         // 拉黑ip
         User user = userDao.getById(blackUid);
+        if (Objects.isNull(user)){
+            throw new BusinessException("用户不存在或者不可以被拉黑！");
+        }
         blackIp(user.getIpInfo().getCreateIp());
         if(!Objects.equals(user.getIpInfo().getCreateIp(), user.getIpInfo().getUpdateIp())) {
             blackIp(user.getIpInfo().getUpdateIp());

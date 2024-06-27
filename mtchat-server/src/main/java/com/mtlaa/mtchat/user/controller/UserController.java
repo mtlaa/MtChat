@@ -19,6 +19,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -113,7 +114,11 @@ public class  UserController {
         if(!roleService.hasPower(uid, RoleEnum.ADMIN)){
             throw new BusinessException("没有拉黑用户的权限，不是admin");
         }
-        userService.blackUser(blackReq.getUid());
+        try {
+            userService.blackUser(blackReq.getUid());
+        } catch (DuplicateKeyException e){
+            throw new BusinessException("该用户已经被拉黑");
+        }
         return ApiResult.success();
     }
 
