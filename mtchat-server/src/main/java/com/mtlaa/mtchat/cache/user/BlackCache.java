@@ -64,6 +64,10 @@ public class BlackCache {
             result.put(BlackTypeEnum.IP.getType(), blackIpSet);
             return result;
         }
+        // 缓存空值，避免缓存穿透
+        RedisUtils.sSet(RedisKey.getKey(RedisKey.BLACK_USER_IP_SET), "0.0.0.0");  // IP
+        RedisUtils.sSet(RedisKey.getKey(RedisKey.BLACK_USER_UID_SET), "0");       // UID
+
         // 查询数据库，更新缓存
         Map<Integer, List<Black>> collect = blackDao.list().stream().collect(Collectors.groupingBy(Black::getType));
         Map<Integer, Set<String>> result = new HashMap<>(collect.size());
