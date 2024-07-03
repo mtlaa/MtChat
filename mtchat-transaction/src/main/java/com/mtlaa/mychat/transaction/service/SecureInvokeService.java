@@ -130,7 +130,7 @@ public class SecureInvokeService {
      */
     public void doAsyncInvoke(SecureInvokeRecord record) {
         executor.execute(() -> {
-            System.out.println(Thread.currentThread().getName());
+//            System.out.println(Thread.currentThread().getName());
             doInvoke(record);
         });
     }

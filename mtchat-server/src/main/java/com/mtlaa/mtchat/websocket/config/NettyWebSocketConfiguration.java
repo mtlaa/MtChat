@@ -73,7 +73,7 @@ public class NettyWebSocketConfiguration {
                         ChannelPipeline pipeline = socketChannel.pipeline();
                         //30秒客户端没有向服务器发送心跳则关闭连接（30秒没有收到客户端的消息）
                         // 注意：这只是一个检测器，只会检测并发出事件，我们需要自己捕获事件并且手动执行操作。 读空闲 写空闲 读写空闲
-                        pipeline.addLast(new IdleStateHandler(3000, 0, 0));
+                        pipeline.addLast(new IdleStateHandler(30, 0, 0));
                         // 因为使用http协议，所以需要使用http的编码器，解码器
                         pipeline.addLast(new HttpServerCodec());
                         // 以块方式写，添加 chunkedWriter 处理器
